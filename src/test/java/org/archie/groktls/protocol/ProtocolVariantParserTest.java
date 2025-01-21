@@ -32,6 +32,7 @@ public class ProtocolVariantParserTest {
         check("TLSv1.0", "TLS", 3, 1, null);
         check("TLSv1.1", "TLS", 3, 2, null);
         check("TLSv1.2", "TLS", 3, 3, null);
+        check("TLSv1.3", "TLS", 3, 4, null);
     }
 
     private void check(final String name, final String family, final int major, final int minor, final String pseudo) {

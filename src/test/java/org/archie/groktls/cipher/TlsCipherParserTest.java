@@ -447,6 +447,15 @@ public class TlsCipherParserTest {
         check("TLS_DHE_RSA_WITH_CHACHA20_POLY1305_SHA256", "DHE", "RSA", false, null, "CHACHA20_POLY1305", null, CipherType.AEAD, 256, "SHA256", 256);
     }
 
+    @Test
+    public void testTls13_RFC8446_CipherSuites() {
+        check("TLS_AES_128_GCM_SHA256", "TLSv1.3_PROTOCOL_DECIDED", "TLSv1.3_PROTOCOL_DECIDED", false, null, "AES", "GCM", CipherType.AEAD, 128, "SHA256", 256);
+        check("TLS_AES_256_GCM_SHA384", "TLSv1.3_PROTOCOL_DECIDED", "TLSv1.3_PROTOCOL_DECIDED", false, null, "AES", "GCM", CipherType.AEAD, 256, "SHA384", 384);
+        check("TLS_CHACHA20_POLY1305_SHA256", "TLSv1.3_PROTOCOL_DECIDED", "TLSv1.3_PROTOCOL_DECIDED", false, null, "CHACHA20_POLY1305", null, CipherType.AEAD, 256, "SHA256", 256);
+        check("TLS_AES_128_CCM_SHA256", "TLSv1.3_PROTOCOL_DECIDED", "TLSv1.3_PROTOCOL_DECIDED", false, null, "AES", "CCM", CipherType.AEAD, 128, "SHA256", 256);
+        check("TLS_AES_128_CCM_8_SHA256", "TLSv1.3_PROTOCOL_DECIDED", "TLSv1.3_PROTOCOL_DECIDED", false, null, "AES", "CCM_8", CipherType.AEAD, 128, "SHA256", 256);
+    }
+
     private void check(final String cipherSuite,
                        final String keyExchange,
                        final String authentication,

@@ -24,6 +24,14 @@ public class KeyExchangeImpl implements KeyExchange {
 
     private static final Map<String, String> ALIASES = new HashMap<String, String>();
 
+    /**
+     * TLSv1.3 does not have a static key exchange and instead uses a key exchange message elsewhere in the protocol. Returning this should
+     * make other filters work correctly with this while marking that no key exchange is part of the specification. From the Protocol
+     * definition we do know there will be a key exchange so using the {@code NULL} key exchange would not be appropriate.
+     */
+    public static final KeyExchangeImpl TLSv13_KEY_EXCHANGE = new KeyExchangeImpl("TLSv1.3_PROTOCOL_DECIDED", "TLSv1.3_PROTOCOL_DECIDED",
+            "TLSv1.3_PROTOCOL_DECIDED", false, null);
+
     static {
         // GOST key exchange from http://tools.ietf.org/html/draft-chudov-cryptopro-cptls-04
         ALIASES.put("GOSTR341094", "GOST94");

@@ -598,7 +598,35 @@ public class CipherSuiteFilterTest extends AbstractItemFilterTest<CipherSuite> {
                                                      "TLS_DH_anon_WITH_AES_128_CBC_SHA",
                                                      "TLS_RSA_WITH_NULL_SHA");
         final List<String> expectedCiphers = Arrays.asList("TLS_RSA_WITH_AES_128_CBC_SHA", "TLS_DH_RSA_WITH_AES_128_CBC_SHA");
-        ItemFilter<CipherSuite> filter = new CipherSuiteFilterBuilderImpl().add(cipherSuite("TLS_RSA_WITH_AES_128_CBC_SHA")).add(cipherSuite("TLS_DH_RSA_WITH_AES_128_CBC_SHA")).build();
+        final ItemFilter<CipherSuite> filter = new CipherSuiteFilterBuilderImpl().add(cipherSuite("TLS_RSA_WITH_AES_128_CBC_SHA")).add(cipherSuite("TLS_DH_RSA_WITH_AES_128_CBC_SHA")).build();
         checkResult("TLS_RSA_WITH_AES_128_CBC_SHA, TLS_DH_RSA_WITH_AES_128_CBC_SHA", filter, supported, expectedCiphers);
+    }
+
+    @Test
+    public void testFipsIncludes13() {
+        final List<String> tls13Ciphers = Arrays.asList("TLS_AES_128_GCM_SHA256",
+                                                     "TLS_AES_256_GCM_SHA384",
+                                                     "TLS_CHACHA20_POLY1305_SHA256",
+                                                     "TLS_AES_128_CCM_SHA256",
+                                                     "TLS_AES_128_CCM_8_SHA256");
+
+        final List<String> expectedFipsCiphers = Arrays.asList("TLS_AES_128_GCM_SHA256",
+                "TLS_AES_256_GCM_SHA384",
+                "TLS_AES_128_CCM_SHA256");
+
+        final ItemFilter<CipherSuite> filter = new CipherSuiteFilterBuilderImpl().add(fips()).build();
+        checkResult("FIPS", filter, tls13Ciphers, expectedFipsCiphers);
+    }
+
+    @Test
+    public void testForwardSecrecyIncludes13() {
+        final List<String> tls13Ciphers = Arrays.asList("TLS_AES_128_GCM_SHA256",
+                                                     "TLS_AES_256_GCM_SHA384",
+                                                     "TLS_CHACHA20_POLY1305_SHA256",
+                                                     "TLS_AES_128_CCM_SHA256",
+                                                     "TLS_AES_128_CCM_8_SHA256");
+
+        final ItemFilter<CipherSuite> filter = new CipherSuiteFilterBuilderImpl().add(forwardSecrecy()).build();
+        checkResult("FS", filter, tls13Ciphers, tls13Ciphers);
     }
 }

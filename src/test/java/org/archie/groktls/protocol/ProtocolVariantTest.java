@@ -24,10 +24,11 @@ public class ProtocolVariantTest {
 
     @Test
     public void testOrdering() {
-        ProtocolVariant p10 = new ProtocolVariantImpl("TLSv1", "TLS", 3, 1, null);
-        ProtocolVariant p10b = new ProtocolVariantImpl("SSLv3.1", "SSL", 3, 1, null);
-        ProtocolVariant p11 = new ProtocolVariantImpl("TLSv1.1", "TLS", 3, 2, null);
-        ProtocolVariant p12 = new ProtocolVariantImpl("TLSv1.2", "TLS", 3, 3, null);
+        final ProtocolVariant p10 = new ProtocolVariantImpl("TLSv1", "TLS", 3, 1, null);
+        final ProtocolVariant p10b = new ProtocolVariantImpl("SSLv3.1", "SSL", 3, 1, null);
+        final ProtocolVariant p11 = new ProtocolVariantImpl("TLSv1.1", "TLS", 3, 2, null);
+        final ProtocolVariant p12 = new ProtocolVariantImpl("TLSv1.2", "TLS", 3, 3, null);
+        final ProtocolVariant p13 = new ProtocolVariantImpl("TLSv1.3", "TLS", 3, 4, null);
 
         assertTrue(p10.compareTo(p10b) == 0);
         assertTrue(p10b.compareTo(p10) == 0);
@@ -40,6 +41,9 @@ public class ProtocolVariantTest {
 
         assertTrue(p11.compareTo(p12) < 0);
         assertTrue(p12.compareTo(p11) > 0);
+
+        assertTrue(p12.compareTo(p13) < 0);
+        assertTrue(p13.compareTo(p12) > 0);
     }
 
 }

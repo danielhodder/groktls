@@ -16,6 +16,8 @@
 package org.archie.groktls.impl.cipher;
 
 import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -35,6 +37,18 @@ public class CipherSuiteParserImpl implements ItemParser<CipherSuite> {
     private static final Pattern PATTERN_DUAL_KEY_EXCHANGE = Pattern.compile("(RSA_FIPS|SRP_SHA|[^_]+)_([^_]+)(_EXPORT.*)?");
     private static final Pattern PATTERN_SINGLE_KEY_EXCHANGE = Pattern.compile("(RSA_FIPS|SRP_SHA|[^_]+)(_EXPORT.*)?");
 
+    private static final Set<String> TLS_1_3_CIPHERS;
+
+    static {
+        final Set<String> tls13Ciphers = new HashSet<>();
+        tls13Ciphers.add("TLS_AES_128_GCM_SHA256");
+        tls13Ciphers.add("TLS_AES_256_GCM_SHA384");
+        tls13Ciphers.add("TLS_CHACHA20_POLY1305_SHA256");
+        tls13Ciphers.add("TLS_AES_128_CCM_SHA256");
+        tls13Ciphers.add("TLS_AES_128_CCM_8_SHA256");
+        TLS_1_3_CIPHERS = Collections.unmodifiableSet(tls13Ciphers);
+    }
+
     private static final String PREFIX_SSLV2 = "SSL_CK_";
     private static final String PREFIX_SSL = "SSL_";
     private static final String PREFIX_TLS = "TLS_";
@@ -50,6 +64,11 @@ public class CipherSuiteParserImpl implements ItemParser<CipherSuite> {
         if (cipherSuite.endsWith(SCSV_SUFFIX)) {
             return new CipherSuiteImpl(cipherSuite);
         }
+
+        if (TLS_1_3_CIPHERS.contains(cipherSuite)) {
+            return parseTls13(cipherSuite);
+        }
+
         final String cs = patchSSLv2(cipherSuite);
         final int withSplit = cs.indexOf(WITH);
         if (withSplit == -1) {
@@ -83,6 +102,45 @@ public class CipherSuiteParserImpl implements ItemParser<CipherSuite> {
             return null;
         }
         return new CipherSuiteImpl(cipherSuite, keyExchange, cipher, hash);
+    }
+
+    /**
+     * TLS 1.3 redefines how the Cipher Spec is written. The key differences are:
+     * <p>
+     * <ul>
+     * <li>There is no
+     *
+     * <pre>
+     * _WITH_
+     * </pre>
+     *
+     * in the cipher string anymore separating the Key Exchange from the Encryption Algorithm.
+     * <li>There is no Key Exchange defined in the suite at all. The Key Exchange has been moved to a separate TLS extension in the
+     * protocol.
+     *
+     * Because of these changes the list of ciphers is now very, very, small and so they are listed explicitly for comparison - this might
+     * not work if this list expands, or if TLS 1.4 comes along and changes more things. For compatibility all TLS 1.3 ciphers are reported
+     * as using DHE key exchange so that previous matching works.
+     */
+    private CipherSuite parseTls13(final String cipherSuite) {
+        final String cs = removeTlsPrefix(cipherSuite);
+        final int lastSep = cs.lastIndexOf(SEPARATOR);
+        if (lastSep == -1) {
+            return null;
+        }
+        final String cipherSpec = cs.substring(0, lastSep);
+        final String hashSpec = cs.substring(lastSep + 1);
+
+        final CipherImpl cipher = parseCipher(cipherSpec);
+        if (cipher == null) {
+            return null;
+        }
+
+        final MacImpl hash = parseHash(hashSpec);
+        if (hash == null) {
+            return null;
+        }
+        return new CipherSuiteImpl(cipherSuite, KeyExchangeImpl.TLSv13_KEY_EXCHANGE, cipher, hash);
     }
 
     @Override

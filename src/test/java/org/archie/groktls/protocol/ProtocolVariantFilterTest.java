@@ -35,8 +35,9 @@ public class ProtocolVariantFilterTest extends AbstractItemFilterTest<ProtocolVa
     public static final String TLSv1 = "TLSv1";
     public static final String TLSv11 = "TLSv1.1";
     public static final String TLSv12 = "TLSv1.2";
+    public static final String TLSv13 = "TLSv1.3";
 
-    private static final List<String> ALL_PROTOCOLS = Arrays.asList(TLSv1, TLSv11, TLSv12, SSLv2HELLO, SSLv2, SSLv3);
+    private static final List<String> ALL_PROTOCOLS = Arrays.asList(TLSv1, TLSv11, TLSv12, TLSv13, SSLv2HELLO, SSLv2, SSLv3);
 
     @Override
     protected ItemFilterSpecParser<ProtocolVariant> createSpecParser() {
@@ -46,8 +47,8 @@ public class ProtocolVariantFilterTest extends AbstractItemFilterTest<ProtocolVa
     @Test
     public void testAll() {
         final List<String> supported = ALL_PROTOCOLS;
-        final List<String> expected = Arrays.asList(TLSv1, TLSv11, TLSv12, SSLv3);
-        ItemFilter<ProtocolVariant> filter = new ProtocolVariantFilterBuilderImpl().add(all()).build();
+        final List<String> expected = Arrays.asList(TLSv1, TLSv11, TLSv12, TLSv13, SSLv3);
+        final ItemFilter<ProtocolVariant> filter = new ProtocolVariantFilterBuilderImpl().add(all()).build();
         checkResult("ALL", filter, supported, expected);
     }
 
@@ -73,16 +74,16 @@ public class ProtocolVariantFilterTest extends AbstractItemFilterTest<ProtocolVa
     public void testComplementOfDefault() {
         final List<String> supported = ALL_PROTOCOLS;
         final List<String> defaults = Arrays.asList(TLSv1, TLSv11, SSLv3);
-        final List<String> expected = Arrays.asList(TLSv12);
-        ItemFilter<ProtocolVariant> filter = new ProtocolVariantFilterBuilderImpl().add(complementOfDefaults()).build();
+        final List<String> expected = Arrays.asList(TLSv12, TLSv13);
+        final ItemFilter<ProtocolVariant> filter = new ProtocolVariantFilterBuilderImpl().add(complementOfDefaults()).build();
         checkResult("COMPLEMENTOFDEFAULT", filter, supported, expected, defaults);
     }
 
     @Test
     public void testFamily() {
         final List<String> supported = ALL_PROTOCOLS;
-        final List<String> expected = Arrays.asList(TLSv1, TLSv11, TLSv12);
-        ItemFilter<ProtocolVariant> filter = new ProtocolVariantFilterBuilderImpl().add(family("TLS")).build();
+        final List<String> expected = Arrays.asList(TLSv1, TLSv11, TLSv12, TLSv13);
+        final ItemFilter<ProtocolVariant> filter = new ProtocolVariantFilterBuilderImpl().add(family("TLS")).build();
         checkResult("fTLS", filter, supported, expected);
     }
 
@@ -114,16 +115,16 @@ public class ProtocolVariantFilterTest extends AbstractItemFilterTest<ProtocolVa
     @Test
     public void testMinVersion() {
         final List<String> supported = ALL_PROTOCOLS;
-        final List<String> expected = Arrays.asList(TLSv1, TLSv11, TLSv12);
-        ItemFilter<ProtocolVariant> filter = new ProtocolVariantFilterBuilderImpl().add(minimumVersion(3, 1)).build();
+        final List<String> expected = Arrays.asList(TLSv1, TLSv11, TLSv12, TLSv13);
+        final ItemFilter<ProtocolVariant> filter = new ProtocolVariantFilterBuilderImpl().add(minimumVersion(3, 1)).build();
         checkResult(">=TLSv1", filter, supported, expected);
     }
 
     @Test
     public void testMinVersionString() {
         final List<String> supported = ALL_PROTOCOLS;
-        final List<String> expected = Arrays.asList(TLSv1, TLSv11, TLSv12);
-        ItemFilter<ProtocolVariant> filter = new ProtocolVariantFilterBuilderImpl().add(minimumVersion(TLSv1)).build();
+        final List<String> expected = Arrays.asList(TLSv1, TLSv11, TLSv12, TLSv13);
+        final ItemFilter<ProtocolVariant> filter = new ProtocolVariantFilterBuilderImpl().add(minimumVersion(TLSv1)).build();
         checkResult(">=TLSv1", filter, supported, expected);
     }
 

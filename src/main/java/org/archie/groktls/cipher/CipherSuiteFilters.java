@@ -275,7 +275,7 @@ public class CipherSuiteFilters {
      * <em>Filter spec usage:</em> <code>FS</code>.
      */
     public static CipherFilter forwardSecrecy() {
-        return or(keyExchange("DHE"), keyExchange("ECDHE"));
+        return or(keyExchange("DHE"), keyExchange("ECDHE"), keyExchange("TLSv1.3_PROTOCOL_DECIDED"));
     }
 
     /**
@@ -501,8 +501,8 @@ public class CipherSuiteFilters {
     public static CipherFilter fips() {
         // http://csrc.nist.gov/publications/fips/fips140-2/fips1402annexa.pdf
         // http://csrc.nist.gov/publications/nistpubs/800-52/SP800-52.pdf
-        return and(or(keyExchange("DH"), keyExchange("DHE"), keyExchange("RSA"), keyExchange("ECDH"), keyExchange("ECDHE")),
-                   or(authentication("DSS"), authentication("RSA"), authentication("ECDSA")),
+        return and(or(keyExchange("DH"), keyExchange("DHE"), keyExchange("RSA"), keyExchange("ECDH"), keyExchange("ECDHE"), keyExchange("TLSv1.3_PROTOCOL_DECIDED")),
+                   or(authentication("DSS"), authentication("RSA"), authentication("ECDSA"), authentication("TLSv1.3_PROTOCOL_DECIDED")),
                    or(encryption("AES"), encryption("3DES")),
                    or(encryptionMode("CBC"), encryptionMode("GCM"), encryptionMode("CCM")),
                    or(mac("SHA"), mac("SHA256"), mac("SHA384"), mac("SHA512")));
